@@ -70,7 +70,9 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 
     Route::resource('admin/product', ProductController::class);
 
+    Route::post('admin/product/restore/{product}',  [ProductController::class, 'restore'])->name('product.restore');
 
+    // Route::post('admin/product/restore/{product}',  [ProductController::class, 'restore'])->name('product.restore');
 
     //-------ProductCategory-------////
     Route::get('admin/product_category', [ProductCategoryController::class, 'index'])->name('product_category.list');

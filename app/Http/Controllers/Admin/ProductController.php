@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Pipeline;
 
 class ProductController extends Controller
 {
@@ -17,41 +18,41 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->all());
-        $keyword = $request->keyword;
-        $status = $request->status;
-        $amountStart = $request->amount_start;
-        $amountEnd = $request->amount_end;
-        $sort = $request->sort;
-        // dd($keyword);
-        //Eloquent
-        // $products = Product::paginate(config('myconfig.item_per_page'));
-        $filter = [];
-        if(!is_null($keyword)){
-            $filter[] = ['name','like','%'.$keyword.'%'];
-        }
-        if(!is_null($status)){
-            $filter[] = ['status',$status];
-        }
-        if(!is_null($amountStart) && !is_null($amountEnd))
-        {
-            $filter[] = ['price' ,'>=' ,$amountStart];
-            $filter[] = ['price' ,'<=' ,$amountEnd];
-        }
-            //sort
-        $sortBy = ['id' ,'desc'];
-        switch($sort){
-            // case 0:
-            //     $sortBy = ['id' ,'desc'];
-            //     break;
-            case 1:
-                $sortBy = ['price' ,'asc'];
-                break;
-            case 2:
-                $sortBy = ['price' ,'desc'];
-                break;
-            default :$sortBy = ['id' ,'desc'];
-        }
+        // // dd($request->all());
+        // $keyword = $request->keyword;
+        // $status = $request->status;
+        // $amountStart = $request->amount_start;
+        // $amountEnd = $request->amount_end;
+        // $sort = $request->sort;
+        // // dd($keyword);
+        // //Eloquent
+        // // $products = Product::paginate(config('myconfig.item_per_page'));
+        // $filter = [];
+        // if(!is_null($keyword)){
+        //     $filter[] = ['name','like','%'.$keyword.'%'];
+        // }
+        // if(!is_null($status)){
+        //     $filter[] = ['status',$status];
+        // }
+        // if(!is_null($amountStart) && !is_null($amountEnd))
+        // {
+        //     $filter[] = ['price' ,'>=' ,$amountStart];
+        //     $filter[] = ['price' ,'<=' ,$amountEnd];
+        // }
+        //     //sort
+        // $sortBy = ['id' ,'desc'];
+        // switch($sort){
+        //     // case 0:
+        //     //     $sortBy = ['id' ,'desc'];
+        //     //     break;
+        //     case 1:
+        //         $sortBy = ['price' ,'asc'];
+        //         break;
+        //     case 2:
+        //         $sortBy = ['price' ,'desc'];
+        //         break;
+        //     default :$sortBy = ['id' ,'desc'];
+        // }
 
         // if(!is_null($amountStart) && !is_null($amountEnd)){
         //     $products = Product::where($filter)
@@ -60,7 +61,7 @@ class ProductController extends Controller
         // }
         // dd($filter);
 
-        $products = Product::where($filter)->orderBy($sortBy[0],$sortBy[1])->paginate(config('myconfig.item_per_page'));
+        // $products = Product::where($filter)->orderBy($sortBy[0],$sortBy[1])->paginate(config('myconfig.item_per_page'));
 
         // $products = Product::query();
         // if(is_null($keyword)){
@@ -80,9 +81,24 @@ class ProductController extends Controller
         // ->paginate(config('myconfig.item_per_page'));
 
 
+        $pipelines = [
+            \App\Filters\ByKeyword::class,
+            \App\Filters\ByStatus::class,
+            \App\Filters\ByMinMax::class
+        ];
+
+        $pipeline = Pipeline::send(Product::query()->withTrashed())
+        ->through($pipelines)
+        ->thenReturn();
+
+        $products = $pipeline->paginate(config('myconfig.item_per_page'));
+
+
+
         // dd($products->toSql());
         $maxPrice = Product::max('price');
         $minPrice = Product::min('price');
+
         return view('admin.product.list', [
             'products' => $products ,
             'maxPrice' => $maxPrice ,
@@ -243,4 +259,16 @@ class ProductController extends Controller
 
         return redirect()->route('admin.product.index')->with('message', $message);
     }
+
+    public function restore(Product $product)
+    {
+        $product = Product::withTrashed()->find($product);
+        // $product->deleted_at = null;
+        // $product ->save();
+        $check = $product->restore();
+        $message = $check ? 'delete success' : 'delete failed';
+        return redirect()->route('admin.product.index')->with('message', $message);
+
+    }
+
 }

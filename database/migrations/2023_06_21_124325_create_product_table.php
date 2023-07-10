@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('product', function (Blueprint $table) {
             $table->id();
-            $table->foreign('product_category_id')->references('id')->on('product_category');
             $table->string('name', 255);
             $table->string('slug',255)->nullable();
             $table->float('price')->nullable()->unsigned();
@@ -33,7 +32,10 @@ return new class extends Migration
            $table->unsignedBigInteger('product_category_id')->nullable();
 
            //Buoc2: chi dinh field do la khoa ngoai
+            $table->foreign('product_category_id')->references('id')->on('product_category')->onDelete('cascade');
+
             $table->timestamps();
+            $table->softDeletes(); //xoa nhung van giu du lieu trong database
         });
     }
 

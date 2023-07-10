@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name', 255);
             $table->boolean('status')->default(1);
             $table->timestamps();
+            $table->softDeletes(); //xoa nhung van giu du lieu trong database
         });
     }
 
