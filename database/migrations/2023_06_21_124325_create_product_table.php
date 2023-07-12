@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('short_description');
             $table->text('information');
             $table->integer('qty')->unsigned();
-            $table->string('image_url',255);
+            $table->string('image_url',255)->nullable();
             $table->string('shipping',255)->nullable();
             $table->float('weight')->nullable()->unsigned();
 

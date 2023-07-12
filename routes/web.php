@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,21 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//dung redirect()->route() thi phai co -> name()
-Route::get('home', function(){
-    return view('client.pages.home');
-})->name('home');
-
 Route::get('admin', function(){
     return view('admin.layout.master');
 })->name('admin')->middleware('auth.admin');
-
-Route::get('cocacola', function(){
-    return '<h1>Cocacola</h1>';
-});
-Route::get('chivas', function(){
-    return '<h1>Chivas</h1>';
-})->middleware('age.18');
 
 
 Route::middleware('auth.admin')->name('admin.')->group(function (){
@@ -94,3 +84,33 @@ Route::middleware('auth.admin')->name('admin.')->group(function (){
 });
 
 require __DIR__.'/auth.php';
+
+
+//dung redirect()->route() thi phai co -> name()
+Route::get('home', [HomeController::class,'index'])->name('home');
+
+Route::get('blog-details', function(){
+    return view('client.pages.blog-details');
+})->name('blog-details');
+Route::get('check-out', function(){
+    return view('client.pages.check-out');
+})->name('check-out');
+Route::get('contact', function(){
+    return view('client.pages.contact');
+})->name('contact');
+Route::get('login', function(){
+    return view('client.pages.login');
+})->name('login');
+Route::get('register', function(){
+    return view('client.pages.register');
+})->name('register');
+Route::get('shop-grid', function(){
+    return view('client.pages.shop-grid');
+})->name('shop-grid');
+
+Route::get('product/{slug}', [ClientProductController::class,'getProductBySlug'])->name('client.pages.shop-details');
+
+Route::get('shoping-cart',function(){
+    return view('client.pages.shoping-cart');
+})->name('shoping-cart');
+

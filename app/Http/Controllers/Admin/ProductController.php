@@ -92,7 +92,7 @@ class ProductController extends Controller
         ->thenReturn();
 
         $products = $pipeline->paginate(config('myconfig.item_per_page'));
-
+        // $products = $pipeline->get();
 
 
         // dd($products->toSql());

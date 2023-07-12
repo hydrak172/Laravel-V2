@@ -136,6 +136,67 @@
                     <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
                 </ul> --}}
               </div>
+
+              <h1>Datatable</h1>
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th style="width: 10px">id</th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Image</th>
+                    <th>Product Category Name</th>
+                    <th style="width: 40px">Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse($products as $product)
+                      <tr>
+                          <td>{{ $loop->iteration }}</td>
+                          <td>{{ $product->name  }}</td>
+                          <td>{{ $product->slug}}</td>
+                          <td>{{ number_format( $product->price, 2)}}</td>
+                          <td>{!! $product->description !!}</td>
+                          <td>
+                              @php
+                                  $imageLink = (is_null($product->image_url)) || (!file_exists("images/".$product->image_url)) ? 'default_image.png' : $product->image_url;
+                              @endphp
+                              <img src="{{asset('images/'.$imageLink)}}" alt="{{ $product->name}}" width="200px", height="150px">
+                          </td>
+                          <td>{{ $product->category->name}}</td>
+                          {{-- <td>{{ $product->status }}</td> --}}
+
+                          <td>
+                              <a class="btn btn-{{ $product->status ? 'success' : 'danger' }}">
+                                  {{ $product->status ? 'Show' : 'Hide' }}
+                              </a>
+                          </td>
+                          <td>
+                              <form method="post" action="{{ route('admin.product.destroy', ['product'=> $product->id]) }}">
+                                  @csrf
+                                  @method('delete')
+                                  <a href="{{ route('admin.product.show', ['product'=> $product->id]) }}" class="btn btn-primary">Edit</a>
+                                  <button onclick="return confirm('Are you sure?')" type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                              @if ($product->trashed())
+                                  <form action="{{ route('admin.product.restore',['product' => $product->id ])}}" method="POST">
+                                      @csrf
+                                      <button type="submit" class="btn btn-success">Restore</button>
+                                  </form>
+                              @endif
+                          </td>
+                      </tr>
+                  @empty
+                      <tr>
+                          <td colspan="4">No Product Category</td>
+                      </tr>
+                  @endforelse
+                </tbody>
+              </table>
+
             </div>
             <!-- /.card -->
           </div>

@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/daterangepicker/daterangepicker.css') }}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('backend/plugins/summernote/summernote-bs4.css') }}">
+    <!-- datatable -->
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- Jquery UI -->
@@ -769,7 +770,9 @@
 
     <!-- CKEditor -->
     <script src="https://cdn.ckeditor.com/ckeditor5/38.1.0/classic/ckeditor.js"></script>
-
+<!--datatable -->
+    <script src="//cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css"></script>
+    <script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 
     @yield('js-custom')
 

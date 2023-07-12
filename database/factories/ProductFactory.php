@@ -32,7 +32,6 @@ class ProductFactory extends Factory
             'information' => fake()->text,
             'qty' => fake()->numberBetween(10,100),
             'shipping' => fake()->text,
-            'image_url' => '',
             'weight' => fake()->numberBetween(10,1000),
             'status' => fake()->numberBetween(0,1),
             'product_category_id' => $productCategoryId
