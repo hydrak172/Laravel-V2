@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\ProfileController;
@@ -98,9 +99,9 @@ Route::get('check-out', function(){
 Route::get('contact', function(){
     return view('client.pages.contact');
 })->name('contact');
-Route::get('login', function(){
-    return view('client.pages.login');
-})->name('login');
+// Route::get('login', function(){
+//     return view('client.pages.login');
+// })->name('login');
 Route::get('register', function(){
     return view('client.pages.register');
 })->name('register');
@@ -110,7 +111,7 @@ Route::get('shop-grid', function(){
 
 Route::get('product/{slug}', [ClientProductController::class,'getProductBySlug'])->name('client.pages.shop-details');
 
-Route::get('shoping-cart',function(){
-    return view('client.pages.shoping-cart');
-})->name('shoping-cart');
+Route::get('shoping-cart',[CartController::class , 'index'])->name('shoping-cart.index');
+
+Route::get('/product/add-to-cart/{productId}',[CartController::class, 'addProductToCart'])->name('product.add-to-cart');
 
