@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Client\CartController;
 use App\Http\Controllers\Client\HomeController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\ProfileController;
@@ -111,7 +110,6 @@ Route::get('shop-grid', function(){
 
 Route::get('product/{slug}', [ClientProductController::class,'getProductBySlug'])->name('client.pages.shop-details');
 
-Route::get('shoping-cart',[CartController::class , 'index'])->name('shoping-cart.index');
 
-Route::get('/product/add-to-cart/{productId}',[CartController::class, 'addProductToCart'])->name('product.add-to-cart');
-
+//cart
+require __DIR__.'/cart/web.php';

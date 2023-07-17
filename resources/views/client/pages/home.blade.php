@@ -140,7 +140,7 @@
                             <ul class="featured__item__pic__hover">
                                 <li><a href="#"><i class="fa fa-heart"></i></a></li>
                                 <li><a href="#"><i class="fa fa-retweet"></i></a></li>
-                                <li><a class="product-add-to-cart" data-url="{{ route('product.add-to-cart',['productId'=> $product->id]) }}" href="#"><i class="fa fa-shopping-cart" ></i></a></li>
+                                <li><a class="product-add-to-cart" data-url="{{ route('shoping-cart.add-to-cart',['productId' => $product->id]) }}" href="#"><i class="fa fa-shopping-cart" ></i></a></li>
                             </ul>
                         </div>
                         <div class="featured__item__text">
@@ -452,19 +452,15 @@
                     method: 'GET', //methos of form
                     url: url,
                     success: function(res){
-                        alert(res.message);
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
                         Swal.fire({
                             icon: 'success',
                             title: 'Oops...Success!',
                             text: 'Something went Success!',
-                        })
-                    },
-                    error: function(res){
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...Failed!',
-                            text: 'Something went wrong!',
-                        })
+                        });
+                        $('#total_product').html(total_product);
+                        $('#total_price').html('$'+total_price);
                     }
                 })
                 })

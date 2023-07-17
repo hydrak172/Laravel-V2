@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-lg-6 col-md-6">
                     <div class="product__details__pic">
-                        <div class="product__details__pic__item">
+                        {{-- <div class="product__details__pic__item">
                             @php
                             $imageLink = (is_null($product->image_url)) || (!file_exists("images/".$product->image_url)) ? 'default_image.png' : $product->image_url;
                             @endphp
@@ -40,7 +40,7 @@
                                 src="img/product/details/thumb-3.jpg" alt="">
                             <img data-imgbigurl="i{{ asset('images/'.$imageLink)}}"
                                 src="img/product/details/thumb-4.jpg" alt="">
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
                 <div class="col-lg-6 col-md-6">
@@ -59,11 +59,11 @@
                         <div class="product__details__quantity">
                             <div class="quantity">
                                 <div class="pro-qty">
-                                    <input type="text" value="1">
+                                    <input type="text" value="1" id="qty">
                                 </div>
                             </div>
                         </div>
-                        <a href="#" class="primary-btn">ADD TO CARD</a>
+                        <a data-id ={{$product->id}} data-url ="{{ route('shoping-cart.add-to-cart',['productId' => $product->id]) }}" href="#" class="primary-btn">ADD TO CARD</a>
                         <a href="#" class="heart-icon"><span class="icon_heart_alt"></span></a>
                         <ul>
                             <li><b>Availability</b> <span>In Stock</span></li>
@@ -208,4 +208,35 @@
         </div>
     </section>
     <!-- Related Product Section End -->
+@endsection
+
+@section('js-custom')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.primary-btn').on('click',function(event){
+                event.preventDefault();
+                var qty = $("#qty").val();
+
+                var productId = $(this).data('id');
+                //product/add-to-cart/256/7
+                var url = $(this).data('url')+'/'+qty;
+
+                $.ajax({
+                    method: 'GET', //methos of form
+                    url: url,
+                    success: function(res){
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Oops...Success!',
+                            text: 'Something went Success!',
+                        });
+                        $('#total_product').html(total_product);
+                        $('#total_price').html('$'+total_price);
+                    }
+                })
+            });
+        })
+    </script>
 @endsection

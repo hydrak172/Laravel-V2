@@ -90,11 +90,17 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
-                                    @foreach ($cart as $item )
+                                    @php
+                                        $totalPrice = 0 ; @endphp
+                                    @foreach ($cart as $producId => $item )
+                                    @php
+                                        $itemCart = $item['price'] * $item['qty'];
+                                        // $subtotal += $itemCart;
+                                        // $total += $itemCart;
+                                    @endphp
                                     <tr>
                                         <td class="shoping__cart__item">
-                                            <img src="img/cart/cart-1.jpg" alt="">
+                                            <img src="{{ $item['image_url'] }}" alt="" >
                                             <h5>{{$item['name']}}</h5>
                                         </td>
                                         <td class="shoping__cart__price">
@@ -108,12 +114,13 @@
                                             </div>
                                         </td>
                                         <td class="shoping__cart__total">
-                                            $110.00
+                                            ${{number_format($itemCart)}}
                                         </td>
                                         <td class="shoping__cart__item__close">
-                                            <span class="icon_close"></span>
+                                            <span data-id="{{ $producId }}" class="icon_close" id="close"></span>
                                         </td>
                                     </tr>
+                                    @php $totalPrice += $item['qty'] * $item['price'] @endphp
                                     @endforeach
                                 </tbody>
                             </table>
@@ -143,8 +150,8 @@
                         <div class="shoping__checkout">
                             <h5>Cart Total</h5>
                             <ul>
-                                <li>Subtotal <span>$454.98</span></li>
-                                <li>Total <span>$454.98</span></li>
+                                <li>Subtotal <span>{{number_format($totalPrice,2)}}</span></li>
+                                <li>Total <span>{{number_format($totalPrice,2)}}</span></li>
                             </ul>
                             <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
                         </div>
@@ -153,4 +160,30 @@
             </div>
         </section>
         <!-- Shoping Cart Section End -->
+@endsection
+
+
+@section('js-custom')
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.icon_close').on('click',function(event){
+                event.preventDefault();
+                var close = $("#close").val();
+
+                var url = $(this).data('url')+'/'+close;
+
+                $.ajax({
+                    method: 'GET', //methos of form
+                    url: url,
+                    success: function(res){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Oops...Success!',
+                            text: 'Something went Success!',
+                        });
+                    }
+                })
+            });
+        })
+    </script>
 @endsection

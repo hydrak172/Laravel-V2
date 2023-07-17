@@ -48,7 +48,7 @@
                                     <a href="#" onclick="event.preventDefault(); document.getElementById('frm-logout').submit();">
                                     Log Out</a>
                                     <form id="frm-logout" action="{{route('nguoidung.dangxuat')}}" method="POST" style="display:none;">
-                                    @csrf 
+                                    @csrf
                                 </form>
                                 @endif
                             </div>
@@ -86,9 +86,18 @@
                     <div class="header__cart">
                         <ul>
                             <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-                            <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
+                            @php $total = session()->has('cart') ? count(session()->get('cart')) : 0; @endphp
+                            <li><a href="#"><i class="fa fa-shopping-bag" ></i> <span id="total_product">{{$total}}</span></a></li>
                         </ul>
-                        <div class="header__cart__price">item: <span>$150.00</span></div>
+                        @php
+                            $totalPrice = 0;
+                            if(session()->has('cart')){
+                                foreach (session()->get('cart') as $item) {
+                                    $totalPrice = $item['qty'] * $item['price'];
+                                }
+                            }
+                        @endphp
+                        <div class="header__cart__price">item: <span id="total_price">${{ number_format($totalPrice,2) }} </span></div>
                     </div>
                 </div>
             </div>
