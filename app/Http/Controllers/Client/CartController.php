@@ -45,16 +45,34 @@ class CartController extends Controller
         }
         return number_format($totalPrice ,2);
     }
-    public function deleteProductInCart ($productId){
-        $cart = session()->get('cart') ?? [] ;
-        if(array_key_exists($productId,$cart)){
+    public function deleteProductInCart($productId){
+        $cart = session()->get('cart') ?? [];
+        if(array_key_exists($productId, $cart)){
             unset($cart[$productId]);
-            session()->put('cart',$cart);
+            session()->put('cart', $cart);
         }else{
-            return response()->json(['message' => 'Remove product failed!'],Response::HTTP_BAD_REQUEST);
+            return response()->json(['message' => 'Remove product failed!'], Response::HTTP_BAD_REQUEST);
         }
         $totalProduct = count($cart);
         $totalPrice = $this->calculateTotalPrice($cart);
-        return response()->json(['message' => 'Remove product Success!' ,'total_product' => $totalProduct,'total_price' => $totalPrice]);
+        return response()->json(['message' => 'Remove product success!', 'total_product' => $totalProduct, 'total_price' =>  $totalPrice]);
+    }
+    public function updateProductInCart($productId,$qty){
+        $cart = session()->get('cart') ?? [];
+        if(array_key_exists($productId,$cart)){
+            $cart[$productId]['qty'] = $qty;
+            if(!$qty){
+                unset($cart[$productId]);
+            }
+            session()->put('cart', $cart);
+        }
+        $totalProduct = count($cart);
+        $totalPrice = $this->calculateTotalPrice($cart);
+        return response()->json(['message' => 'Remove product success!', 'total_product' => $totalProduct, 'total_price' =>  $totalPrice]);
+    }
+
+    public function deleteCart(){
+        session()->put('cart', []);
+        return response()->json(['message' => 'Delete product success!', 'total_product' => 0, 'total_price' =>  0]);
     }
 }

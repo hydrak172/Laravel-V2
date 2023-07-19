@@ -89,39 +89,33 @@
                                         <th></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @php
-                                        $totalPrice = 0 ; @endphp
-                                    @foreach ($cart as $producId => $item )
-                                    @php
-                                        $itemCart = $item['price'] * $item['qty'];
-                                        // $subtotal += $itemCart;
-                                        // $total += $itemCart;
-                                    @endphp
-                                    <tr>
-                                        <td class="shoping__cart__item">
-                                            <img src="{{ $item['image_url'] }}" alt="" >
-                                            <h5>{{$item['name']}}</h5>
-                                        </td>
-                                        <td class="shoping__cart__price">
-                                            {{number_format($item['price'])}}
-                                        </td>
-                                        <td class="shoping__cart__quantity">
-                                            <div class="quantity">
-                                                <div class="pro-qty">
-                                                    <input type="text" value="{{ $item['qty'] }}" />
-                                                </div>
+                                <tbody id="table-product">
+                                    @php $totalPrice = 0; @endphp
+                            @foreach ($cart as $productId => $item)
+                                <tr id="product{{$productId}}">
+                                    <td class="shoping__cart__item">
+                                        <img width="150" src="{{ $item['image_url'] }}" alt="">
+                                        <h5>{{ $item['name'] }}</h5>
+                                    </td>
+                                    <td class="shoping__cart__price">
+                                        ${{ number_format($item['price'], 2) }}
+                                    </td>
+                                    <td class="shoping__cart__quantity">
+                                        <div class="quantity">
+                                            <div class="pro-qty">
+                                                <input data-url ="{{ route('shoping-cart.update-product-in-cart',['productId' =>$productId]) }}" data-id="{{ $productId }}"  type="text" value="{{ $item['qty'] }}">
                                             </div>
-                                        </td>
-                                        <td class="shoping__cart__total">
-                                            ${{number_format($itemCart)}}
-                                        </td>
-                                        <td class="shoping__cart__item__close">
-                                            <span data-id="{{ $producId }}" class="icon_close" id="close"></span>
-                                        </td>
-                                    </tr>
-                                    @php $totalPrice += $item['qty'] * $item['price'] @endphp
-                                    @endforeach
+                                        </div>
+                                    </td>
+                                    <td class="shoping__cart__total" data-url ="{{ route('shoping-cart.update-product-in-cart',['productId' =>$productId]) }}">
+                                        <span>${{ number_format($item['price'] * $item['qty'], 2) }}</span>
+                                    </td>
+                                    <td class="shoping__cart__item__close">
+                                        <span data-url ="{{ route('shoping-cart.delete-product-in-cart',['productId' =>$productId]) }}" data-id="{{ $productId }}" class="icon_close"></span>
+                                    </td>
+                                </tr>
+                                @php $totalPrice += $item['qty'] * $item['price']  @endphp
+                            @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -131,8 +125,10 @@
                     <div class="col-lg-12">
                         <div class="shoping__cart__btns">
                             <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-                            <a href="#" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
-                                Upadate Cart</a>
+                            <a href="#" class="primary-btn cart-btn cart-btn-right cart=btn-delete-all-item"><span class="icon_loading"
+                                data-url="{{ route('shoping-cart.delete-cart') }}"
+                            ></span>
+                                Delete Cart</a>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -150,8 +146,8 @@
                         <div class="shoping__checkout">
                             <h5>Cart Total</h5>
                             <ul>
-                                <li>Subtotal <span>{{number_format($totalPrice,2)}}</span></li>
-                                <li>Total <span>{{number_format($totalPrice,2)}}</span></li>
+                                <li>Subtotal <div class="subtotal"><span>{{number_format($item['price'] * $item['qty'],2)}}</span></div></li>
+                                <li>Total <div class="total"><span>{{number_format($item['price'] * $item['qty'],2)}}</span></div></li>
                             </ul>
                             <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
                         </div>
@@ -162,15 +158,46 @@
         <!-- Shoping Cart Section End -->
 @endsection
 
-
 @section('js-custom')
     <script type="text/javascript">
         $(document).ready(function(){
             $('.icon_close').on('click',function(event){
-                event.preventDefault();
-                var close = $("#close").val();
+                var productId = $(this).data('id');
+                var url = $(this).data('url');
+                $.ajax({
+                    method: 'GET', //methos of form
+                    url: url,
+                    success: function(res){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Oops...Success!',
+                            text: 'Something went Success!',
+                        });
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
+                        $('#total_product').html(total_product);
+                        $('#total_price').html('$'+total_price);
+                        $('#product'+ productId).empty();
+                    }
+                })
+            });
 
-                var url = $(this).data('url')+'/'+close;
+            $('span.qtybtn').on('click',function(){
+                var button = $(this);
+
+                var oldValue = button.siblings('input').val();
+
+
+                if(button.hasClass('inc')){
+                    oldValue =  parseFloat(oldValue)+1;
+                }else{
+                    oldValue =  parseFloat(oldValue)-1;
+                    oldValue = oldValue >= 0 ? oldValue : 0;
+                }
+
+
+                var url = button.siblings('input').data('url')+"/" +oldValue;
+
 
                 $.ajax({
                     method: 'GET', //methos of form
@@ -181,9 +208,54 @@
                             title: 'Oops...Success!',
                             text: 'Something went Success!',
                         });
+                        reloadView(res);
+
+                        if(!total_product){
+                            $("#product"+id).empty();
+                        }
                     }
                 })
             });
+
+            $('.cart=btn-delete-all-item').on('click',function(){
+                var url = $(this).data('url');
+                $.ajax({
+                    method: 'GET', //methos of form
+                    url: url,
+                    success: function(res){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Oops...Success!',
+                            text: 'Something went Success!',
+                        });
+
+                        reloadView(res);
+                        $('#table-product').empty();
+                    }
+                })
+            })
+
+            function reloadView(res){
+                        var total_price = res.total_price;
+                        var total_product = res.total_product;
+                        $('#total_product').html(total_product);
+                        $('#total_price').html('$'+total_price);
+
+
+                        var urlCart = "{{ route('shoping-cart.index')}}";
+
+                        var selector = "#product"+id+".shoping__cart__total span";
+                        var urlUpdate = urlCart + " " + selector;
+                        $(selector).load(urlUpdate);
+
+                        var selectorSubtotal = '.shoping__checkout.subtotal';
+                        var urlUpdateSubtotal = urlCart + " " + selectorSubtotal;
+                        $(selectorSubtotal).load(urlUpdateSubtotal);
+
+                        var selectorTotal   = '.shoping__checkout.total';
+                        var urlUpdateTotal = urlCart + " " + selectorTotal;
+                        $(selectorTotal).load(urlUpdateTotal);
+            }
         })
     </script>
 @endsection
