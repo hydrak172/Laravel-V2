@@ -23,7 +23,9 @@ class ComposerServiceProvider extends ServiceProvider
     {
         $arrayViewProductCategory = [
             'client.pages.home',
-            'client.pages.shop-details'
+            'client.pages.shop-details',
+            'client.pages.shoping-cart',
+            'client.pages.check-out'
         ];
         View::composer($arrayViewProductCategory,function($view){
              $productCategories = ProductCategory::latest()->get()->filter(function ($productCategory) {

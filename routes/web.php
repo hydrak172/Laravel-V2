@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Client\HomeController;
+use App\Http\Controllers\Client\OrderController;
 use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -92,9 +93,7 @@ Route::get('home', [HomeController::class,'index'])->name('home');
 Route::get('blog-details', function(){
     return view('client.pages.blog-details');
 })->name('blog-details');
-Route::get('check-out', function(){
-    return view('client.pages.check-out');
-})->name('check-out');
+
 Route::get('contact', function(){
     return view('client.pages.contact');
 })->name('contact');
@@ -109,6 +108,7 @@ Route::get('shop-grid', function(){
 })->name('shop-grid');
 
 Route::get('product/{slug}', [ClientProductController::class,'getProductBySlug'])->name('client.pages.shop-details');
+Route::get('check-out',[OrderController::class,'index'])->name('check-out.index');
 
 
 //cart

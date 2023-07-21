@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 //cart
-Route::prefix('shoping-cart')->name('shoping-cart.')->group(function(){
+Route::prefix('shoping-cart')->name('shoping-cart.')->middleware('auth')->group(function(){
     Route::get('/',[CartController::class , 'index'])->name('index');
     Route::get('/product/add-to-cart/{productId}/{qty?}',[CartController::class, 'addProductToCart'])->name('add-to-cart');
     Route::get('/product/delete-product-to-cart/{productId}',[CartController::class, 'deleteProductInCart'])->name('delete-product-in-cart');
     Route::get('/product/update-product-to-cart/{productId}/{qty?}', [CartController::class , 'updateProductInCart'])->name('update-product-in-cart');
     Route::get('delete-cart', [CartController::class , 'deleteCart'])->name('delete-cart');
+    Route::post('placeorder',[CartController::class , 'placeorder'])->name('place-order');
 });
 

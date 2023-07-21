@@ -103,7 +103,7 @@
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
-                                                <input data-url ="{{ route('shoping-cart.update-product-in-cart',['productId' =>$productId]) }}" data-id="{{ $productId }}"  type="text" value="{{ $item['qty'] }}">
+                                                <input data-id="{{ $productId }}" data-url ="{{ route('shoping-cart.update-product-in-cart',['productId' =>$productId]) }}"   type="text" value="{{ $item['qty'] }}">
                                             </div>
                                         </div>
                                     </td>
@@ -125,9 +125,7 @@
                     <div class="col-lg-12">
                         <div class="shoping__cart__btns">
                             <a href="#" class="primary-btn cart-btn">CONTINUE SHOPPING</a>
-                            <a href="#" class="primary-btn cart-btn cart-btn-right cart=btn-delete-all-item"><span class="icon_loading"
-                                data-url="{{ route('shoping-cart.delete-cart') }}"
-                            ></span>
+                            <a href="#" data-url="{{ route('shoping-cart.delete-cart') }}" class="primary-btn cart-btn cart-btn-right cart=btn-delete-all-item"><span class="icon_loading"></span>
                                 Delete Cart</a>
                         </div>
                     </div>
@@ -146,10 +144,11 @@
                         <div class="shoping__checkout">
                             <h5>Cart Total</h5>
                             <ul>
-                                <li>Subtotal <div class="subtotal"><span>{{number_format($item['price'] * $item['qty'],2)}}</span></div></li>
-                                <li>Total <div class="total"><span>{{number_format($item['price'] * $item['qty'],2)}}</span></div></li>
+                                <li>Subtotal <div class="subtotal"><span>${{number_format($totalPrice,2)}}</span></div></li>
+                                <li>Total <div class="total"><span>${{number_format($totalPrice,2)}}</span></div></li>
                             </ul>
-                            <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                            
+                            <a href="{{ route('check-out.index') }}" class="primary-btn">PROCEED TO CHECKOUT</a>
                         </div>
                     </div>
                 </div>
@@ -182,21 +181,16 @@
                 })
             });
 
-            $('span.qtybtn').on('click',function(){
+            $('span.qtybtn').on('click', function(){
                 var button = $(this);
-
                 var oldValue = button.siblings('input').val();
-
-
                 if(button.hasClass('inc')){
-                    oldValue =  parseFloat(oldValue)+1;
+                    oldValue = parseFloat(oldValue) + 1;
                 }else{
-                    oldValue =  parseFloat(oldValue)-1;
+                    oldValue = parseFloat(oldValue) - 1;
                     oldValue = oldValue >= 0 ? oldValue : 0;
                 }
-
-
-                var url = button.siblings('input').data('url')+"/" +oldValue;
+                var url = button.siblings('input').data('url') + "/" + oldValue;
 
 
                 $.ajax({
@@ -208,6 +202,11 @@
                             title: 'Oops...Success!',
                             text: 'Something went Success!',
                         });
+                        var urlCart = "{{ route('shoping-cart.index') }}";
+                        var id = button.siblings('input').data('id');
+                        var selector = "#product"+id+" .shoping__cart__total span";
+                        var urlUpdate = urlCart + " " + selector;
+                        $(selector).load(urlUpdate);
                         reloadView(res);
 
                         if(!total_product){
@@ -230,6 +229,7 @@
                         });
 
                         reloadView(res);
+
                         $('#table-product').empty();
                     }
                 })
@@ -256,6 +256,10 @@
                         var urlUpdateTotal = urlCart + " " + selectorTotal;
                         $(selectorTotal).load(urlUpdateTotal);
             }
+
+
+
+            
         })
     </script>
 @endsection
