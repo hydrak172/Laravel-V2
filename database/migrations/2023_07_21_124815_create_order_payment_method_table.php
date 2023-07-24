@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('order');
-            $table->string('payment_provider',255);
+            $table->string('payment_provider',255)->nullable();
             $table->float('total_balance')->unsigned();
             $table->string('status',255);
             $table->timestamps();

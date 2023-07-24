@@ -19,11 +19,11 @@ class Order extends Model
         'failed' => 'failed'
     ];
 
-    const STATUS_PENDING = 'pending'; 
-    const STATUS_SUCCESS = 'success'; 
-    const STATUS_CANCEL = 'cancel'; 
-    const STATUS_FAILED = 'failed'; 
-    const STATUS_SHIPPING= 'shipping'; 
+    const STATUS_PENDING = 'pending';
+    const STATUS_SUCCESS = 'success';
+    const STATUS_CANCEL = 'cancel';
+    const STATUS_FAILED = 'failed';
+    const STATUS_SHIPPING= 'shipping';
     protected $fillable = [
         'user_id',
         'address',

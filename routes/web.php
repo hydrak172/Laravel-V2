@@ -111,5 +111,13 @@ Route::get('product/{slug}', [ClientProductController::class,'getProductBySlug']
 Route::get('check-out',[OrderController::class,'index'])->name('check-out.index');
 
 
+// Route::get('test-sms',function(){
+//     $client =new Twilio\Rest\Client(env('TWILIO_ACCOUNT_SID'),env('TWILIO_AUTH_TOKEN'));
+//     $client->messages->create($receiverNumber, [
+//         'from' => env('TWILIO_PHONE_NUMBER'),
+//         'body' => 'test'
+//     ]);
+// });
+
 //cart
 require __DIR__.'/cart/web.php';

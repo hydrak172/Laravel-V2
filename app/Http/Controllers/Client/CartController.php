@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderEmail;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderPaymentMethod;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -46,7 +48,7 @@ class CartController extends Controller
     public function calculateTotalPrice (array $cart){
         $totalPrice = 0;
         foreach($cart as $item){
-            $totalPrice = $item['qty'] * $item['price'];
+            $totalPrice += $item['qty'] * $item['price'];
         }
         return number_format($totalPrice ,2);
     }
@@ -84,11 +86,11 @@ class CartController extends Controller
         //validate from request
 
 
-        //try 
-        
+        //try
+
         try{
         DB::beginTransaction();
-            //get cart and calculate price total 
+            //get cart and calculate price total
             $cart = session()->get('cart', []);
             $totalPrice = 0;
             foreach($cart as $item){
@@ -106,7 +108,7 @@ class CartController extends Controller
                 'total' =>$totalPrice,
             ]);
 
-            //Create records order items 
+            //Create records order items
 
             foreach ($cart as $productId => $item){
                 $orderItem = OrderItem::create([
@@ -118,7 +120,7 @@ class CartController extends Controller
                 ]);
             }
 
-            //create order payment method 
+            //create order payment method
             $orderPaymentMethod = OrderPaymentMethod::create([
                 'order_id'=>$order->id,
                 'payment_provider'=>$request->get('payment_provider'),
@@ -130,13 +132,27 @@ class CartController extends Controller
             $user->phone = $request->phone;
             $user->save();
 
-            //reset session 
+            //reset session
             session()->put('cart',[]);
+            //sned mail to customers
+            Mail::to('mowo.khanhnguyen1712@gmail.com')->send(new OrderEmail($order));
+
+            //send sms to customer
+            // $receiverNumber = '+84769789379';
+            // $client = new \Twilio\Rest\Client(env('TWILIO_ACCOUNT_SID'),env('TWILIO_AUTH_TOKEN'));
+            //     $client->messages->create($receiverNumber, [
+            //     'from' => env('TWILIO_PHONE_NUMBER'),
+            //     'body' => 'Your Order is Success!'
+            // ]);
+
+
+
             DB::commit();
-        }catch(\Exception $message){
+        }catch(\Exception $exception){
             DB::rollback();
+            return $exception->getMessage();
         }
         return redirect()->route('home')->with('msg','Order Success!');
 
-    }     
+    }
 }

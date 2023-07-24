@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('order', function (Blueprint $table) {
-           $table->float('subtotal');
-           $table->float('total');
+           $table->float('subtotal')->unsigned();
+           $table->float('total')->unsigned();
         });
     }
 

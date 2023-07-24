@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Client\CartController;
+use App\Mail\OrderEmail;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +26,6 @@ Route::prefix('shoping-cart')->name('shoping-cart.')->middleware('auth')->group(
     Route::post('placeorder',[CartController::class , 'placeorder'])->name('place-order');
 });
 
+// Route::get('test-send-mail',function(){
+//     Mail::to('mowo.khanhnguyen1712@gmail.com')->send(new OrderEmail());
+// });
